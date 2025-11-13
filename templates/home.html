@@ -1,11 +1,29 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pedidos de Farmácia</title>
-</head>
-<body>
-    
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center mb-10">
+    <h1 class="text-4xl font-bold text-gray-800">Nossos Medicamentos</h1>
+    <p class="text-gray-600 mt-2">Qualidade e preço baixo para sua saúde.</p>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    {% for product in products %}
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 border border-gray-100">
+        <div class="h-48 bg-gray-200 flex items-center justify-center">
+            <img src="{{ url_for('static', filename=product.image) }}" alt="{{ product.name }}" class="h-full w-full object-cover">
+        </div>
+        
+        <div class="p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-2">{{ product.name }}</h3>
+            <div class="flex justify-between items-center mt-4">
+                <span class="text-2xl font-bold text-emerald-600">R$ {{ "%.2f"|format(product.price) }}</span>
+                <a href="{{ url_for('add_to_cart', product_id=product.id) }}" 
+                   class="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition font-medium shadow-md hover:shadow-lg flex items-center gap-2">
+                   + Adicionar
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmácia HBR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans flex flex-col min-h-screen">
+
+    <nav class="bg-emerald-600 shadow-md text-white relative z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                
+                <a href="{{ url_for('home') }}" class="flex items-center gap-2">
+                    <img src="{{ url_for('static', filename='logo.webp') }}" alt="Logo Farmácia HBR" 
+                         class="h-10 w-10 rounded-full object-cover border-2 border-white shadow-sm">
+                    <span class="text-xl md:text-2xl font-bold">Farmácia<span class="font-light">&nbsp;HBR</span></span>
+                </a>
+
+                <button id="mobile-btn" class="lg:hidden text-white focus:outline-none hover:text-emerald-200">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+
+                <div class="hidden lg:flex items-center space-x-6">
+                    <a href="{{ url_for('home') }}" class="hover:text-emerald-200 transition">Produtos</a>
+                    <a href="{{ url_for('cart') }}" class="hover:text-emerald-200 transition flex items-center gap-1">
+                        🛒 Carrinho
+                    </a>
+
+                    {% if current_user.is_authenticated %}
+                        <span class="text-sm bg-emerald-700 py-1 px-3 rounded-full">Olá, {{ current_user.username }}</span>
+                        <a href="{{ url_for('logout') }}" class="hover:text-red-200 text-sm font-medium">Sair</a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="hover:text-emerald-200">Login</a>
+                        <a href="{{ url_for('register') }}" class="bg-white text-emerald-600 px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition">Cadastro</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden lg:hidden bg-emerald-700 border-t border-emerald-500">
+            <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
+                <a href="{{ url_for('home') }}" class="block hover:text-emerald-200">Produtos</a>
+                <a href="{{ url_for('cart') }}" class="block hover:text-emerald-200">🛒 Carrinho</a>
+                
+                {% if current_user.is_authenticated %}
+                    <div class="border-t border-emerald-600 pt-2 mt-2">
+                        <p class="text-sm text-emerald-200 mb-2">Logado como: {{ current_user.username }}</p>
+                        <a href="{{ url_for('logout') }}" class="block text-red-300 hover:text-white font-bold">Sair</a>
+                    </div>
+                {% else %}
+                    <div class="border-t border-emerald-600 pt-2 mt-2 flex flex-col space-y-3">
+                        <a href="{{ url_for('login') }}" class="block hover:text-emerald-200">Login</a>
+                        <a href="{{ url_for('register') }}" class="inline-block bg-white text-emerald-600 text-center px-4 py-2 rounded font-bold">Cadastrar-se</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8 flex-grow">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="mb-6 space-y-2">
+                {% for message in messages %}
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded shadow" role="alert">
+                        <p>{{ message }}</p>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gray-800 text-gray-400 text-center py-6 mt-auto">
+        <p>&copy; 2025 Farmácia HBR. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        const btn = document.getElementById('mobile-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+    </script>
+
+</body>
+</html>

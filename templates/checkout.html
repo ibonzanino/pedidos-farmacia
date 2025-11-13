@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="text-3xl font-bold mb-8 text-gray-800">Finalizar Compra</h2>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+    
+    <div class="bg-white p-6 rounded-lg shadow-md h-fit">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Resumo do Pedido</h3>
+        <div class="flex justify-between mb-2 text-gray-600">
+            <span>Subtotal Produtos:</span>
+            <span>R$ {{ "%.2f"|format(total_products) }}</span>
+        </div>
+        <div class="flex justify-between mb-4 text-gray-600">
+            <span>Frete (Fixo):</span>
+            <span>R$ {{ "%.2f"|format(shipping) }}</span>
+        </div>
+        <hr class="border-gray-200 my-4">
+        <div class="flex justify-between text-2xl font-bold text-emerald-600">
+            <span>Total a Pagar:</span>
+            <span>R$ {{ "%.2f"|format(grand_total) }}</span>
+        </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-xl font-bold text-gray-700 mb-6">Dados de Pagamento (Simulação)</h3>
+        
+        <form action="/checkout" method="POST" class="space-y-4">
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Nome no Cartão</label>
+                <input type="text" name="card_name" placeholder="JOAO DA SILVA" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+            </div>
+            
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Número do Cartão</label>
+                <input type="text" name="card_number" placeholder="0000 0000 0000 0000" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Validade</label>
+                    <input type="text" name="expiration" placeholder="MM/AA" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">CVV</label>
+                    <input type="text" name="cvv" placeholder="123" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg shadow mt-6 transition transform hover:scale-105">
+                Confirmar Pagamento
+            </button>
+            <p class="text-xs text-gray-400 text-center mt-2">Ambiente de teste. Nenhum valor será cobrado.</p>
+        </form>
+    </div>
+</div>
+{% endblock %}
