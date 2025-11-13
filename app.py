@@ -10,11 +10,20 @@ from flask_login import (
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 import pymysql
+from flasgger import Swagger
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "chave_secreta_super_segura"
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:@localhost/farmacia_db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+app.config["SWAGGER"] = {
+    "title": "Farmácia HBR API",
+    "uiversion": 3,
+    "description": "Documentação das rotas da Farmácia HBR",
+    "version": "1.0.0",
+}
+swagger = Swagger(app)
 
 db = SQLAlchemy(app)
 login_manager = LoginManager()
@@ -52,6 +61,28 @@ def load_user(user_id):
 # --- ROTAS DE AUTENTICAÇÃO ---
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    """
+    Login de Usuário
+    ---
+    tags:
+      - Autenticação
+    parameters:
+      - name: username
+        in: formData
+        type: string
+        required: false
+        description: Nome de usuário (Apenas para POST)
+      - name: password
+        in: formData
+        type: string
+        required: false
+        description: Senha do usuário (Apenas para POST)
+    responses:
+      200:
+        description: Exibe o formulário de login.
+      302:
+        description: Login realizado com sucesso (Redireciona).
+    """
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
@@ -115,12 +146,37 @@ def logout():
 # --- ROTAS DA LOJA ---
 @app.route("/")
 def home():
+    """
+    Página Inicial / Catálogo de Produtos
+    ---
+    tags:
+      - Loja
+    description: Exibe todos os medicamentos cadastrados no banco de dados.
+    responses:
+      200:
+        description: Página carregada com sucesso (HTML).
+    """
     products = Product.query.all()
     return render_template("home.html", products=products)
 
 
 @app.route("/add_to_cart/<int:product_id>")
 def add_to_cart(product_id):
+    """
+    Adiciona um item ao carrinho
+    ---
+    tags:
+      - Carrinho
+    parameters:
+      - name: product_id
+        in: path
+        type: integer
+        required: true
+        description: ID do medicamento a ser adicionado
+    responses:
+      302:
+        description: Redireciona de volta para a Home com mensagem de sucesso.
+    """
     # Carrinho é um dicionário na sessão: { 'id_produto': quantidade }
     if "cart" not in session:
         session["cart"] = {}
