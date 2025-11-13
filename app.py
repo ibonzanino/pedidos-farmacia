@@ -134,6 +134,9 @@ def add_to_cart(product_id):
         cart[str_id] = 1
 
     session.modified = True
+
+    flash("Produto adicionado ao carrinho com sucesso!", "success")
+
     return redirect(url_for("home"))
 
 
