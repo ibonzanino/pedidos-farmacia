@@ -96,6 +96,58 @@ def login():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    """
+    Cadastro de Novo Usuário
+    ---
+    tags:
+      - Autenticação
+    parameters:
+      - name: nome
+        in: formData
+        type: string
+        required: false
+        description: Nome completo do usuário
+      - name: cpf
+        in: formData
+        type: string
+        required: false
+        description: CPF (formato 000.000.000-00)
+      - name: email
+        in: formData
+        type: string
+        required: false
+        description: Endereço de e-mail
+      - name: telefone
+        in: formData
+        type: string
+        required: false
+        description: Telefone para contato
+      - name: endereco
+        in: formData
+        type: string
+        required: false
+        description: Endereço completo de entrega
+      - name: genero
+        in: formData
+        type: string
+        required: false
+        description: Gênero (Masculino, Feminino, Outro, etc.)
+      - name: username
+        in: formData
+        type: string
+        required: false
+        description: Nome de usuário para login
+      - name: password
+        in: formData
+        type: string
+        required: false
+        description: Senha de acesso
+    responses:
+      200:
+        description: Exibe o formulário de cadastro.
+      302:
+        description: Cadastro realizado com sucesso (Redireciona para Login).
+    """
     if request.method == "POST":
         # Pegando todos os campos do formulário
         username = request.form.get("username")
@@ -139,6 +191,16 @@ def register():
 @app.route("/logout")
 @login_required
 def logout():
+    """
+    Encerrar Sessão
+    ---
+    tags:
+      - Autenticação
+    description: Desloga o usuário atual e limpa a sessão de autenticação.
+    responses:
+      302:
+        description: Redireciona para a tela de Login.
+    """
     logout_user()
     return redirect(url_for("login"))
 
@@ -198,6 +260,16 @@ def add_to_cart(product_id):
 
 @app.route("/cart")
 def cart():
+    """
+    Visualizar Carrinho de Compras
+    ---
+    tags:
+      - Carrinho
+    description: Exibe os itens adicionados, calcula subtotal e permite ajustes.
+    responses:
+      200:
+        description: Página do carrinho carregada com sucesso.
+    """
     cart_ids = session.get("cart", {})
     items = []
     total_products = 0
@@ -214,6 +286,27 @@ def cart():
 
 @app.route("/update_cart/<int:product_id>/<action>")
 def update_cart(product_id, action):
+    """
+    Atualizar Item do Carrinho
+    ---
+    tags:
+      - Carrinho
+    parameters:
+      - name: product_id
+        in: path
+        type: integer
+        required: true
+        description: ID do produto a ser alterado
+      - name: action
+        in: path
+        type: string
+        enum: ['add', 'remove', 'delete']
+        required: true
+        description: Ação a realizar (aumentar, diminuir ou remover totalmente)
+    responses:
+      302:
+        description: Redireciona de volta para a página do carrinho atualizada.
+    """
     cart = session.get("cart", {})
     str_id = str(product_id)
 
@@ -234,6 +327,39 @@ def update_cart(product_id, action):
 @app.route("/checkout", methods=["GET", "POST"])
 @login_required
 def checkout():
+    """
+    Finalizar Compra e Pagamento
+    ---
+    tags:
+      - Checkout
+    description: Exibe resumo do pedido com frete e processa o pagamento simulado.
+    parameters:
+      - name: card_name
+        in: formData
+        type: string
+        required: false
+        description: Nome impresso no cartão (Apenas POST)
+      - name: card_number
+        in: formData
+        type: string
+        required: false
+        description: Número do cartão de crédito (Apenas POST)
+      - name: expiration
+        in: formData
+        type: string
+        required: false
+        description: Data de validade MM/AA (Apenas POST)
+      - name: cvv
+        in: formData
+        type: string
+        required: false
+        description: Código de segurança (Apenas POST)
+    responses:
+      200:
+        description: Exibe a tela de pagamento.
+      302:
+        description: Pagamento aprovado (Redireciona para Sucesso).
+    """
     cart_ids = session.get("cart", {})
     total_products = 0
 
@@ -264,6 +390,16 @@ def checkout():
 @app.route("/success")
 @login_required
 def success():
+    """
+    Confirmação de Pedido
+    ---
+    tags:
+      - Checkout
+    description: Exibe a mensagem de sucesso após o pagamento, com detalhes de envio.
+    responses:
+      200:
+        description: Página de confirmação carregada.
+    """
     # Não precisa passar variáveis, o Jinja2 pega o 'current_user' direto
     return render_template("success.html")
 
