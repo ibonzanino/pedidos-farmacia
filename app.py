@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, redirect, url_for, request, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import (
@@ -13,7 +14,17 @@ import pymysql
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "chave_secreta_super_segura"
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:@localhost/farmacia_db"
+
+db_user = os.getenv("DB_USER", "root")
+db_password = os.getenv(
+    "DB_PASSWORD", ""
+)  # Se seu root local tem senha, coloque no 2º parâmetro
+db_host = os.getenv("DB_HOST", "localhost")
+db_name = os.getenv("DB_NAME", "farmacia_db")
+
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    f"mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}"
+)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
